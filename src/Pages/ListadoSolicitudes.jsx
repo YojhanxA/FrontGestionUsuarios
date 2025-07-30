@@ -7,11 +7,11 @@ const ListadoSolicitudes = () => {
 
   const fetchSolicitudes = async () => {
     try {
-      const response = await axios.get(
-        mostrarPendientes
-          ?"${import.meta.env.VITE_API_URL}/api/solicitudes?estado=false"
-          :"${import.meta.env.VITE_API_URL}/api/solicitudes";
-      );
+      const url = mostrarPendientes
+        ? `${import.meta.env.VITE_API_URL}/api/solicitudes?estado=false`
+        : `${import.meta.env.VITE_API_URL}/api/solicitudes`;
+
+      const response = await axios.get(url);
       setSolicitudes(response.data);
     } catch (error) {
       console.error("Error al obtener las solicitudes", error);
@@ -97,5 +97,8 @@ const ListadoSolicitudes = () => {
     </div>
   );
 };
+
+export default ListadoSolicitudes;
+
 
 export default ListadoSolicitudes;
