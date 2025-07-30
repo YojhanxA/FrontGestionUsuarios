@@ -9,8 +9,8 @@ const ListadoSolicitudes = () => {
     try {
       const response = await axios.get(
         mostrarPendientes
-          ? "http://localhost:8080/api/solicitudes?estado=false"
-          : "http://localhost:8080/api/solicitudes"
+          ? `${import.meta.env.VITE_API_URL}/api/solicitudes?estado=false`
+          :`${import.meta.env.VITE_API_URL}/api/solicitudes`;
       );
       setSolicitudes(response.data);
     } catch (error) {
