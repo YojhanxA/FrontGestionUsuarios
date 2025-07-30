@@ -24,7 +24,7 @@ const ListadoSolicitudes = () => {
 
   const marcarComoCreada = async (id) => {
     try {
-      await axios.put(`http://localhost:8080/api/solicitudes/${id}`);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/solicitudes/${id}`);
       fetchSolicitudes(); // Refrescar lista
     } catch (error) {
       console.error("Error al actualizar la solicitud", error);
