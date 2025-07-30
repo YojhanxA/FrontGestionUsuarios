@@ -99,6 +99,3 @@ const ListadoSolicitudes = () => {
 };
 
 export default ListadoSolicitudes;
-
-
-export default ListadoSolicitudes;
