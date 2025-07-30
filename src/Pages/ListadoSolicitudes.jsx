@@ -9,7 +9,7 @@ const ListadoSolicitudes = () => {
     try {
       const response = await axios.get(
         mostrarPendientes
-          ? `${import.meta.env.VITE_API_URL}/api/solicitudes?estado=false`
+          ?`${import.meta.env.VITE_API_URL}/api/solicitudes?estado=false`
           :`${import.meta.env.VITE_API_URL}/api/solicitudes`;
       );
       setSolicitudes(response.data);
