@@ -25,7 +25,7 @@ const Formulario = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8080/api/solicitudes", formData);
+      await axios.post(`${import.meta.env.VITE_API_URL}/api/solicitudes`, formData);
       alert("Solicitud enviada correctamente");
       setFormData({
         nombre: "",
