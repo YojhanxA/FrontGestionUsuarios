@@ -13,6 +13,7 @@ const ListadoSolicitudes = () => {
   const [paginaActual, setPaginaActual] = useState(1);
   const [itemsPorPagina, setItemsPorPagina] = useState(10);
   const [busqueda, setBusqueda] = useState("");
+  const [mostrarVinculados, setMostrarVinculados] = useState(false);
 
   const fetchSolicitudes = async () => {
     try {
@@ -59,20 +60,24 @@ const ListadoSolicitudes = () => {
       alert("No se pudo marcar como creada.");
     }
   };
-//  Justo antes de paginar, se aplica el ordenamiento
-const solicitudesFiltradas = solicitudes
-  .filter((s) => {
-    const textoBusqueda = busqueda.toLowerCase();
-    return (
-      `${s.nombre} ${s.apellido} ${s.cedula} ${s.correo} ${s.secretaria} ${s.subsecretaria}`
-        .toLowerCase()
-        .includes(textoBusqueda)
-    );
-  })
-  .sort((a, b) => {
-  return (b.cuentaCreada === true) - (a.cuentaCreada === true);
-});
+  //  Justo antes de paginar, se aplica el ordenamiento
+  const solicitudesFiltradas = solicitudes
+    .filter((s) => {
+      const textoBusqueda = busqueda.toLowerCase();
+      const coincideBusqueda =
+        `${s.nombre} ${s.apellido} ${s.cedula} ${s.correo} ${s.secretaria} ${s.subsecretaria} ${s.vinculado}`
+          .toLowerCase()
+          .includes(textoBusqueda);
 
+      const cumpleFiltroVinculado = mostrarVinculados
+        ? s.vinculado === true
+        : true;
+
+      return coincideBusqueda && cumpleFiltroVinculado;
+    })
+    .sort((a, b) => {
+      return (b.cuentaCreada === true) - (a.cuentaCreada === true);
+    });
 
   const totalPaginas = Math.ceil(solicitudesFiltradas.length / itemsPorPagina);
   const indexInicio = (paginaActual - 1) * itemsPorPagina;
@@ -105,8 +110,7 @@ const solicitudesFiltradas = solicitudes
       type: "array",
     });
     const file = new Blob([excelBuffer], {
-      type:
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
     saveAs(file, "Solicitudes.xlsx");
   };
@@ -128,7 +132,20 @@ const solicitudesFiltradas = solicitudes
             Mostrar solo pendientes
           </label>
         </div>
+        <div className="form-check form-switch">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            id="filtroVinculados"
+            checked={mostrarVinculados}
+            onChange={() => setMostrarVinculados(!mostrarVinculados)}
+          />
+          <label className="form-check-label" htmlFor="filtroVinculados">
+            Mostrar solo vinculados
+          </label>
+        </div>
       </div>
+      <div className="form-check form-switch"></div>
 
       {/* Input de búsqueda */}
       <div className="mb-3 d-flex flex-column flex-md-row gap-3">
