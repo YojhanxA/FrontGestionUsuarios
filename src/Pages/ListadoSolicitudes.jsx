@@ -70,12 +70,8 @@ const solicitudesFiltradas = solicitudes
     );
   })
   .sort((a, b) => {
-    if (!mostrarPendientes) {
-      // Muestra primero los ya de estado creado
-      return a.cuentaCreada + b.cuentaCreada;
-    }
-    return 0; // No cambia el orden si ya estás mostrando solo pendientes
-  });
+  return (b.cuentaCreada === true) - (a.cuentaCreada === true);
+});
 
 
   const totalPaginas = Math.ceil(solicitudesFiltradas.length / itemsPorPagina);
