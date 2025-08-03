@@ -14,18 +14,58 @@ const Formulario = () => {
     vinculado: false,
   });
 
+  const capitalizar = (texto) =>
+    texto.toLowerCase().replace(/\b\w/g, (letra) => letra.toUpperCase());
+
+  const soloNumeros = (texto) => texto.replace(/\D/g, "");
+
+  const validarCorreo = (correo) => correo.includes("@");
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    let newValue = value;
+
+    if (
+      name === "nombre" ||
+      name === "apellido" ||
+      name === "secretaria" ||
+      name === "subsecretaria"
+    ) {
+      newValue = capitalizar(value);
+    }
+
+    if (name === "correo") {
+      newValue = value.toLowerCase();
+    }
+
+    if (name === "cedula") {
+      newValue = soloNumeros(value).slice(0, 10);
+    }
+
     setFormData({
       ...formData,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: type === "checkbox" ? checked : newValue,
     });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validarCorreo(formData.correo)) {
+      alert("El correo debe contener @");
+      return;
+    }
+
+    if (formData.cedula.length === 0 || formData.cedula.length > 10) {
+      alert("La cédula debe tener entre 1 y 10 dígitos");
+      return;
+    }
+
     try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/api/solicitudes`, formData);
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/solicitudes`,
+        formData
+      );
       alert("Solicitud enviada correctamente");
       setFormData({
         nombre: "",
@@ -39,7 +79,12 @@ const Formulario = () => {
         vinculado: false,
       });
     } catch (error) {
-      alert("Error al enviar solicitud");
+      if (error.response && error.response.status === 400) {
+        // Mensaje como texto plano
+        alert(error.response.data);
+      } else {
+        alert("Error al enviar solicitud");
+      }
       console.error(error);
     }
   };
@@ -83,7 +128,10 @@ const Formulario = () => {
               value={formData.cedula}
               onChange={handleChange}
               required
+              inputMode="numeric"
+              pattern="\d{1,10}"
             />
+            <div className="form-text">Máximo 10 dígitos.</div>
           </div>
           <div className="col-md-6 mb-3">
             <label className="form-label">Correo</label>
@@ -95,6 +143,7 @@ const Formulario = () => {
               onChange={handleChange}
               required
             />
+            <div className="form-text">Debe contener un "@".</div>
           </div>
         </div>
 
@@ -147,7 +196,7 @@ const Formulario = () => {
                 className="form-control"
                 value={formData.fechaInicioContrato}
                 onChange={handleChange}
-                required={!formData.vinculado}
+                required
               />
             </div>
             <div className="col-md-6 mb-3">
@@ -160,7 +209,7 @@ const Formulario = () => {
                 className="form-control"
                 value={formData.fechaFinContrato}
                 onChange={handleChange}
-                required={!formData.vinculado}
+                required
               />
             </div>
           </div>
